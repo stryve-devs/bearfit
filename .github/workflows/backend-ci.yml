@@ -4,9 +4,11 @@ on:
   push:
     paths:
       - 'apps/backend/**'
+      - 'apps/backend/Dockerfile'
   pull_request:
     paths:
       - 'apps/backend/**'
+      - 'apps/backend/Dockerfile'
 
 jobs:
   test:
@@ -24,18 +26,9 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Install dependencies
-        run: cd apps/backend && npm ci
-      - name: Run migrations
-        run: cd apps/backend && npm run migrate
-      - name: Run tests
-        run: cd apps/backend && npm test
-      - name: Run lint
-        run: cd apps/backend && npm run lint
+      - name: Build backend Docker image
+        run: docker build -t backend-test apps/backend
+      - name: Run backend tests in Docker
+        run: docker run --env DATABASE_URL=postgres://postgres:postgres@host.docker.internal:5432/testdb backend-test npm test
