@@ -1,4 +1,4 @@
-name: Frontend CI
+name: Frontend CI (Expo)
 
 on:
   push:
@@ -12,40 +12,53 @@ on:
 
 jobs:
   frontend:
+    name: Expo Frontend CI
     runs-on: ubuntu-latest
 
+    # Everything runs inside the apps/frontend folder
     defaults:
       run:
         working-directory: apps/frontend
 
     steps:
-      - name: Checkout repository
+      - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      - name: List files in apps/frontend
+      - name: 📂 List files (debug)
         run: ls -la
 
-      - name: Set up Node.js
+      - name: 🧰 Set up Node.js and cache
         uses: actions/setup-node@v4
         with:
-          node-version: '20.19.4'
+          node-version: '18'
           cache: 'npm'
+          cache-dependency-path: apps/frontend/package-lock.json
 
-      - name: Verify Node.js version
+      - name: 🔍 Verify Node.js version
         run: node -v
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: npm ci
 
-      - name: Lint code
+      - name: 🧪 Lint code
         run: npm run lint
 
-      # Uncomment if you have tests
-      # - name: Run tests
+      # Uncomment if you have tests set up
+      # - name: 🧪 Run tests
       #   run: npm test
 
-      # Optionally, build for web (Expo)
-      - name: Build Expo web
+      - name: 🛠️ Build Expo Web (optional)
         run: npm run build:web
 
-      # Optionally, you can upload build artifacts here if needed
+      # Optional: Upload the web build as an artifact
+      - name: 📤 Upload web build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: expo-web-build
+          path: apps/frontend/dist
+
+      # Optional: Expo Publish (OTA updates)
+      # - name: 🚀 Publish to Expo
+      #   run: npx expo publish --non-interactive
+      #   env:
+      #     EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
