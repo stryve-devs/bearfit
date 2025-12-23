@@ -3,11 +3,11 @@ name: Frontend CI (Expo)
 on:
   push:
     paths:
-      - "apps/frontend/**"
+      - "../../frontend/**"
       - ".github/workflows/frontend-ci.yml"
   pull_request:
     paths:
-      - "apps/frontend/**"
+      - "../../frontend/**"
       - ".github/workflows/frontend-ci.yml"
 
 jobs:

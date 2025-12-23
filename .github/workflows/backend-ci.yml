@@ -3,12 +3,12 @@ name: Backend CI
 on:
   push:
     paths:
-      - 'apps/backend/**'
-      - 'apps/backend/Dockerfile'
+      - '../../backend/**'
+      - '../../backend/Dockerfile'
   pull_request:
     paths:
-      - 'apps/backend/**'
-      - 'apps/backend/Dockerfile'
+      - '../../backend/**'
+      - '../../backend/Dockerfile'
 
 jobs:
   test:
