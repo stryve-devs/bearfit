@@ -7,17 +7,14 @@ WORKDIR /app
 # Copy dependency files
 COPY package.json package-lock.json ./
 
-# Install dependencies
+# Install dependencies, including development dependencies
 RUN npm install
 
 # Copy all remaining source code
 COPY . .
 
-# Compile TypeScript to JavaScript (output to 'dist/' folder)
-RUN npm run build
-
-# Expose port 3000 for the server
+# Expose port 3000 for the backend
 EXPOSE 3000
 
-# Start the backend server (entry file is 'dist/server.js')
-CMD ["node", "dist/server.js"]
+# Use ts-node to run TypeScript directly
+CMD ["npx", "ts-node", "src/server.ts"]
