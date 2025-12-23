@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   backend:
     build:
@@ -10,14 +8,14 @@ services:
       - "3000:3000" # API endpoint exposed on localhost:3000
     volumes:
       - ./backend:/app # Sync the backend source code for development
-      - /app/node_modules
+      # Removed empty /app/node_modules volume to prevent unwanted anonymous volumes
     environment:
       - NODE_ENV=development
 
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile # Dockerfile for the Expo service
+      dockerfile: Dockerfile # Dockerfile for the frontend
     container_name: frontend-container
     ports:
       - "8081:8081"   # Metro Bundler port
@@ -29,6 +27,6 @@ services:
       BACKEND_URL: "http://backend-container:3000" # Backend service URL (Docker DNS)
     volumes:
       - ./frontend:/app # Sync frontend folder for hot reloading
-      - /app/node_modules
+      # Removed empty /app/node_modules volume to prevent unwanted anonymous volumes
     stdin_open: true
     tty: true
