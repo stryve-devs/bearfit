@@ -1,5 +1,5 @@
 # Use a lightweight Node.js base image
-FROM node:18-alpine
+FROM node:20-alpine
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -19,5 +19,5 @@ EXPOSE 19000
 EXPOSE 19001
 EXPOSE 19002
 
-# Start Metro Bundler using LAN mode
-CMD ["npx", "expo", "start", "--lan"]
+# Start Metro Bundler
+CMD npx expo start $EXPO_START_ARGS

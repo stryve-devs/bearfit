@@ -1,9 +1,10 @@
-import express from 'express';
-import authRoutes from './authRoutes';
+// routes/index.ts
+import { Router } from 'express';
 
-const router = express.Router();
+const router = Router();
 
-// Route definitions
-router.use('/auth', authRoutes);
+// Define your API endpoints here
+router.get('/', (req, res) => res.json({ message: 'Welcome to the API!' }));
+router.get('/health', (req, res) => res.json({ status: 'OK' }));
 
 export default router;
