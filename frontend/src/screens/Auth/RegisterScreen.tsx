@@ -11,7 +11,7 @@ import { AppColors } from '../../constants/colors';
 import { authService } from '../../api/services/auth.service';
 
 export default function RegisterScreen() {
-    const [name, setName] = useState('');
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -19,7 +19,14 @@ export default function RegisterScreen() {
     const router = useRouter();
     const { register } = useAuth();
 
-    // Validation checks
+    // Username validation
+    const isValidUsername = (username: string) => {
+        // 3-20 characters, alphanumeric, underscores, hyphens only
+        const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
+        return usernameRegex.test(username);
+    };
+
+    // Password validation checks
     const hasMinLength = password.length >= 8;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
@@ -28,7 +35,8 @@ export default function RegisterScreen() {
     const passwordsMatch = password === confirmPassword && confirmPassword.length > 0;
 
     const isPasswordValid = hasMinLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
-    const canSubmit = name && email && isPasswordValid && passwordsMatch;
+    const isUsernameValid = isValidUsername(username);
+    const canSubmit = isUsernameValid && email && isPasswordValid && passwordsMatch;
 
     const handleRegister = async () => {
         if (!canSubmit) {
@@ -36,19 +44,35 @@ export default function RegisterScreen() {
             return;
         }
 
+        if (!isUsernameValid) {
+            Alert.alert('Invalid Username', 'Username must be 3-20 characters and contain only letters, numbers, underscores, or hyphens');
+            return;
+        }
+
+        console.log('🚀 Starting registration...');
+        console.log('👤 Username:', username);
+        console.log('📧 Email:', email);
+        console.log('🔒 Password length:', password.length);
+
         setLoading(true);
         try {
             const emailExists = await authService.checkEmailExists(email);
+            console.log('📧 Email exists?', emailExists);
+
             if (emailExists) {
                 Alert.alert('Error', 'Email already in use');
                 setLoading(false);
                 return;
             }
 
-            await register({ name, email, password });
+            console.log('✅ Calling register function...');
+            await register({ username, email, password });
+            console.log('✅ Registration successful!');
             router.replace('/(tabs)');
         } catch (error: any) {
-            Alert.alert('Registration Failed', error.response?.data?.message || 'Something went wrong');
+            console.error('❌ Registration error:', error);
+            const errorMessage = error.response?.data?.message || error.message || 'Something went wrong';
+            Alert.alert('Registration Failed', errorMessage);
         } finally {
             setLoading(false);
         }
@@ -83,14 +107,29 @@ export default function RegisterScreen() {
 
                 {/* Form Section */}
                 <View style={styles.formSection}>
-                    {/* Name Field */}
+                    {/* Username Field */}
                     <AuthTextField
-                        label="Full Name"
-                        placeholder="Enter your full name"
-                        value={name}
-                        onChangeText={setName}
-                        autoCapitalize="words"
+                        label="Username"
+                        placeholder="Choose a username"
+                        value={username}
+                        onChangeText={setUsername}
+                        autoCapitalize="none"
+                        autoCorrect={false}
                     />
+
+                    {/* Username Validation */}
+                    {username.length > 0 && (
+                        <View style={styles.validationContainer}>
+                            <ValidationRow
+                                text="3-20 characters"
+                                isValid={username.length >= 3 && username.length <= 20}
+                            />
+                            <ValidationRow
+                                text="Only letters, numbers, _, -"
+                                isValid={/^[a-zA-Z0-9_-]+$/.test(username)}
+                            />
+                        </View>
+                    )}
 
                     {/* Email Field */}
                     <AuthTextField

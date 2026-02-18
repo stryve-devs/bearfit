@@ -1,19 +1,11 @@
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { AppColors } from '../../src/constants/colors';
-
+// app/(tabs)/_layout.tsx
 export default function TabLayout() {
     return (
         <Tabs
             screenOptions={{
-                headerStyle: {
-                    backgroundColor: AppColors.black,
-                },
+                headerStyle: { backgroundColor: AppColors.black },
                 headerTintColor: AppColors.white,
-                headerTitleStyle: {
-                    color: AppColors.orange,
-                    fontWeight: '600',
-                },
+                headerTitleStyle: { color: AppColors.orange, fontWeight: '600' },
                 headerShadowVisible: false,
                 tabBarStyle: {
                     backgroundColor: AppColors.black,
@@ -24,7 +16,7 @@ export default function TabLayout() {
             }}
         >
             <Tabs.Screen
-                name="index"
+                name="index" // Points to app/(tabs)/index.tsx (Home)
                 options={{
                     title: 'Home',
                     tabBarIcon: ({ color, size }) => (
@@ -33,7 +25,7 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="workouts"
+                name="workouts" // Points to app/(tabs)/workouts.tsx
                 options={{
                     title: 'Workouts',
                     tabBarIcon: ({ color, size }) => (
@@ -42,7 +34,7 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="profile"
+                name="profile" // Points to app/(tabs)/profile.tsx
                 options={{
                     title: 'Profile',
                     tabBarIcon: ({ color, size }) => (

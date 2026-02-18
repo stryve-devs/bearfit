@@ -1,5 +1,5 @@
-# Use a lightweight Node.js base image
-FROM node:20-alpine
+# Use Debian-based Node instead of Alpine (has OpenSSL built-in)
+FROM node:20
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -7,18 +7,20 @@ WORKDIR /app
 # Copy dependency files
 COPY package.json package-lock.json ./
 
-# Ensure devDependencies (tsc, ts-node, etc.) are installed during build
-ENV NPM_CONFIG_PRODUCTION=false
-RUN npm install --include=dev
+# Install dependencies
+RUN npm install
+
+# Copy Prisma schema
+COPY prisma ./prisma
+
+# Generate Prisma Client
+RUN npx prisma generate
 
 # Copy all remaining source code
 COPY . .
 
-# Build TypeScript to JavaScript
-RUN npm run build
+# Expose port 3001 for the backend
+EXPOSE 3001
 
-# Expose port 3000 for the backend
-EXPOSE 3000
-
-# Run compiled JavaScript
-CMD ["node", "dist/server.js"]
+# Run TypeScript directly with ts-node
+CMD ["npx", "ts-node", "src/server.ts"]
